@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const userRouter = require("./routers/userRouter");
+const videoRouter = require("./routers/videoRouter");
+
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
 
 require("dotenv").config();
@@ -21,6 +23,7 @@ mongoose
   });
 
 app.use("/api/users", userRouter);
+app.use("/api/video", videoRouter);
 
 app.use(globalErrorHandler);
 

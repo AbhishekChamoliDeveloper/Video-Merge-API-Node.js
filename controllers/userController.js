@@ -11,6 +11,12 @@ require("dotenv").config();
 exports.signup = catchAsync(async (req, res, next) => {
   const { email, password, firstName, lastName } = req.body;
 
+  const existingUser = await User.findOne({ email: email });
+
+  if (existingUser) {
+    return next(new AppError("User with this email already exists."));
+  }
+
   if (!email || !password || !firstName || !lastName) {
     return next(
       new AppError("Email, password, firstname & lastname is required", 400)
@@ -52,6 +58,33 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     messgae: "User has been created",
+    token: token,
+  });
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new AppError("Please provide email and password", 400));
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return next(new AppError("Incorrect email or password", 400));
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+  if (isPasswordCorrect === false) {
+    return next(new AppError("Incorrect email or password", 400));
+  }
+
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+
+  res.status(200).json({
+    message: "Logged in Successfully",
     token: token,
   });
 });
