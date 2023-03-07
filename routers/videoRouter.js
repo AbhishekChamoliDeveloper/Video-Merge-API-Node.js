@@ -1,12 +1,13 @@
 const express = require("express");
-const authController = require("../middlewares/authController");
-const videoController = require("../controllers/videoController");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 
+const authController = require("../middlewares/authController");
+const videoController = require("../controllers/videoController");
+
 const router = express.Router();
 
-// Set up multer storage for video files
+// Set up multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads");
@@ -24,7 +25,7 @@ router
   .route("/merge-video")
   .post(
     authController.protect,
-    upload.array("video", 2),
+    upload.array("videos", 2),
     videoController.mergeVideos
   );
 

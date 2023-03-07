@@ -6,7 +6,7 @@ const path = require("path");
 
 exports.mergeVideos = catchAsync(async (req, res, next) => {
   if (!req.files || req.files.length !== 2) {
-    return next(new AppError("Please upload two video files", 400));
+    return next(new AppError("Please Upload Two Video Files Only", 400));
   }
 
   const input1 = req.files[0].path;
@@ -16,35 +16,36 @@ exports.mergeVideos = catchAsync(async (req, res, next) => {
   const outputFilename = `${userId}-${Date.now()}.mp4`;
 
   const command = ffmpeg();
+
   command.input(input1);
   command.input(input2);
 
   const outputFilePath = path.join(__dirname, "..", "uploads", outputFilename);
 
   command
-    .mergeToFile(outputFilePath, "./tmp")
+    .mergeToFile(outputFilePath)
     .on("end", () => {
-      // Send output file to client for download
       res.setHeader("Content-Type", "video/mp4");
       res.setHeader(
-        "Content-Disposition",
-        `attachment; filename=${outputFilename}`
+        "Content-Diposition",
+        `attachment: filename=${outputFilename}`
       );
       fs.createReadStream(outputFilePath).pipe(res);
 
-      // Delete input and output files
       fs.unlink(input1, (err) => {
-        if (err) console.error(err);
+        if (err) console.log(err);
       });
+
       fs.unlink(input2, (err) => {
-        if (err) console.error(err);
+        if (err) console.log(err);
       });
+
       fs.unlink(outputFilePath, (err) => {
-        if (err) console.error(err);
+        if (err) console.log(err);
       });
     })
     .on("error", (err) => {
-      console.error(err);
-      return next(new AppError("Error merging videos", 500));
+      console.log(err);
+      return next(new AppError("Error while merging videos", 500));
     });
 });
