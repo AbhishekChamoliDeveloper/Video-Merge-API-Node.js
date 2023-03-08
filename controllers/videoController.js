@@ -13,24 +13,25 @@ exports.mergeVideos = catchAsync(async (req, res, next) => {
   const input2 = req.files[1].path;
 
   const userId = req.user._id.toString();
-  const outputFilename = `${userId}-${Date.now()}.mp4`;
+  const outputFilename = `${userId}-${Date.now()}-merged.mp4`;
 
   const command = ffmpeg();
 
   command.input(input1);
   command.input(input2);
 
-  const outputFilePath = path.join(__dirname, "..", "uploads", outputFilename);
+  const outputFilePath = path.join(__dirname, "..", "tmp", outputFilename);
 
   command
     .mergeToFile(outputFilePath)
-    .on("end", () => {
+    .on("end", async () => {
       res.setHeader("Content-Type", "video/mp4");
       res.setHeader(
         "Content-Diposition",
         `attachment: filename=${outputFilename}`
       );
-      fs.createReadStream(outputFilePath).pipe(res);
+
+      await fs.createReadStream(outputFilePath).pipe(res);
 
       fs.unlink(input1, (err) => {
         if (err) console.log(err);
