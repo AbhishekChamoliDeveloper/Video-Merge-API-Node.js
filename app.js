@@ -10,6 +10,9 @@ require("dotenv").config();
 
 const app = express();
 
+app.use(express.static(__dirname + "/tmp"));
+app.use("/tmp", express.static("tmp"));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

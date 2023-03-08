@@ -10,7 +10,7 @@ const router = express.Router();
 // Set up multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "tmp");
+    cb(null, "/tmp");
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split("/")[1];

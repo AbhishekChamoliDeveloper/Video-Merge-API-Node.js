@@ -20,7 +20,7 @@ exports.mergeVideos = catchAsync(async (req, res, next) => {
   command.input(input1);
   command.input(input2);
 
-  const outputFilePath = path.join(__dirname, "..", "tmp", outputFilename);
+  const outputFilePath = path.join(__dirname, "..", "/tmp", outputFilename);
 
   command
     .mergeToFile(outputFilePath)
