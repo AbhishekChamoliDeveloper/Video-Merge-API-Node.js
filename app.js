@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const userRouter = require("./routers/userRouter");
 const videoRouter = require("./routers/videoRouter");
@@ -10,11 +11,12 @@ require("dotenv").config();
 
 const app = express();
 
+app.use(cors());
+app.use(express.json({ limit: "500mb" }));
+app.use(express.urlencoded({ limit: "500mb", extended: true }));
+
 app.use(express.static(__dirname + "/tmp"));
 app.use("/tmp", express.static("tmp"));
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 mongoose
   .connect(process.env.MONGODB_URI)
