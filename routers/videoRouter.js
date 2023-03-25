@@ -7,7 +7,6 @@ const videoController = require("../controllers/videoController");
 
 const router = express.Router();
 
-// Set up multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "/tmp");
@@ -19,7 +18,12 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1000000000, // 1 GB in bytes
+  },
+});
 
 router
   .route("/merge-video")

@@ -25,13 +25,15 @@ exports.mergeVideos = catchAsync(async (req, res, next) => {
   command
     .mergeToFile(outputFilePath)
     .on("end", async () => {
+      const fileStream = fs.createReadStream(outputFilePath);
+
       res.setHeader("Content-Type", "video/mp4");
       res.setHeader(
-        "Content-Diposition",
+        "Content-Disposition",
         `attachment: filename=${outputFilename}`
       );
 
-      await fs.createReadStream(outputFilePath).pipe(res);
+      await fileStream.pipe(res);
 
       fs.unlink(input1, (err) => {
         if (err) console.log(err);
